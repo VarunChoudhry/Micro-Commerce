@@ -1,0 +1,25 @@
+﻿using Microsoft.EntityFrameworkCore;
+using PaymentService.Data;
+using PaymentService.Integration;
+using PaymentService.Repositories;
+using PaymentService.Services;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+builder.Services.Configure<StripePaymentSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddHttpClient<IStripeCheckoutClient, StripeCheckoutClient>(client => client.BaseAddress = new Uri("https://api.stripe.com/"));
+builder.Services.AddHttpClient<IOrderServiceClient, OrderServiceClient>(client => client.BaseAddress = new Uri(builder.Configuration["Services:OrderServiceBaseUrl"] ?? "http://localhost:5110/api/orders/"));
+builder.Services.AddDbContext<PaymentDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PaymentDb")));
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentService, PaymentServiceHandler>();
+var app = builder.Build();
+app.UseCors();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapControllers();
+await using var scope = app.Services.CreateAsyncScope();
+await scope.ServiceProvider.GetRequiredService<PaymentDbContext>().Database.EnsureCreatedAsync();
+app.Run();

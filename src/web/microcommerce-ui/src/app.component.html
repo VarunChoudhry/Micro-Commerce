@@ -1,0 +1,19 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a routerLink="/" class="brand-mark">MicroCommerce</a>
+    <nav class="topnav">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,56 @@
+<section class="section-head compact-head detail-head">
+  <div>
+    <p class="eyebrow">Catalog</p>
+    <h1>{{ product?.name ?? 'Product Details' }}</h1>
+    <p class="detail-status">{{ statusMessage }}</p>
+  </div>
+  <a routerLink="/products" class="secondary-btn">Back to Products</a>
+</section>
+
+<section class="detail-layout" *ngIf="product; else loadingState">
+  <article class="detail-visual-card">
+    <img [src]="getProductImage(product)" [alt]="product.name" decoding="async" />
+  </article>
+
+  <article class="detail-info-card">
+    <p class="mini-label">{{ getCategoryName(product) }}</p>
+    <h2>{{ product.name }}</h2>
+    <p class="detail-description">{{ product.description }}</p>
+
+    <div class="detail-meta">
+      <span>
+        <small>Price</small>
+        <strong>{{ product.price | currency:'INR':'symbol':'1.0-0' }}</strong>
+      </span>
+      <span>
+        <small>Stock</small>
+        <strong>{{ product.stock }}</strong>
+      </span>
+      <span>
+        <small>Category</small>
+        <strong>{{ getCategoryName(product) }}</strong>
+      </span>
+    </div>
+
+    <div class="button-row detail-actions">
+      <button
+        *ngIf="!isAdmin()"
+        type="button"
+        class="primary-btn"
+        [disabled]="isAdded(product.id)"
+        [ngClass]="{ 'added-btn': isAdded(product.id) }"
+        (click)="addToCart(product)"
+      >
+        {{ isAdded(product.id) ? 'Added' : 'Add to Cart' }}
+      </button>
+      <a routerLink="/products" class="ghost-btn">Continue Browsing</a>
+    </div>
+  </article>
+</section>
+
+<ng-template #loadingState>
+  <section class="inline-banner action-banner">
+    <p>{{ loading ? 'Loading...' : 'Product not found.' }}</p>
+  </section>
+</ng-template>
+

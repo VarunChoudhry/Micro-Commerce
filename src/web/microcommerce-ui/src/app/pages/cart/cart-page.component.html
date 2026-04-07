@@ -1,0 +1,51 @@
+<section class="section-head compact-head">
+  <div>
+    <p class="eyebrow">Checkout</p>
+    <h1>Your Cart</h1>
+  </div>
+</section>
+
+<section class="inline-banner">
+  <p>{{ statusMessage }}</p>
+</section>
+
+<section class="split-layout cart-layout">
+  <div class="stack-list">
+    <article class="cart-row" *ngFor="let item of cartItems">
+      <div class="product-media cart-item-media">
+        <img [src]="getProductImage(item)" [alt]="item.product" loading="lazy" decoding="async" />
+      </div>
+      <div class="cart-item-copy">
+        <h3>{{ item.product }}</h3>
+        <p>Quantity: {{ item.quantity }}</p>
+      </div>
+      <div class="cart-actions">
+        <strong>{{ item.price * item.quantity | currency:'INR':'symbol':'1.0-0' }}</strong>
+        <div class="mini-button-row">
+          <button type="button" class="secondary-btn small-btn" (click)="decrease(item)">-</button>
+          <button type="button" class="secondary-btn small-btn" (click)="increase(item)">+</button>
+          <button type="button" class="ghost-btn small-btn" (click)="remove(item)">Remove</button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <aside class="summary-card cart-summary-card">
+    <p class="eyebrow">Summary</p>
+    <div class="summary-line">
+      <span>Items</span>
+      <strong>{{ totalItems }}</strong>
+    </div>
+    <div class="summary-line">
+      <span>Total</span>
+      <strong>{{ totalAmount | currency:'INR':'symbol':'1.0-0' }}</strong>
+    </div>
+
+    <label class="address-field">
+      <span>Shipping Address</span>
+      <textarea [(ngModel)]="shippingAddress" rows="5" placeholder="Enter complete shipping address"></textarea>
+    </label>
+
+    <button type="button" class="primary-btn wide-btn" (click)="checkout()">Pay with Stripe</button>
+  </aside>
+</section>

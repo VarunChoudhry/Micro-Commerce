@@ -1,0 +1,117 @@
+<section class="hero-panel">
+  <div>
+    <p class="eyebrow">MicroCommerce Frontend</p>
+    <h1>Storefront, checkout, and admin starter built in Angular.</h1>
+
+    <div class="button-row">
+      <button type="button" class="primary-btn" (click)="browseCatalog()">Browse Catalog</button>
+      <a *ngIf="!isAdmin()" [routerLink]="isLoggedIn() ? '/orders' : '/login'" class="secondary-btn">
+        {{ isLoggedIn() ? 'Track Orders' : 'Login to Continue' }}
+      </a>
+      <a *ngIf="isAdmin()" routerLink="/categories" class="secondary-btn">Manage Categories</a>
+    </div>
+  </div>
+  <aside class="spotlight-card">
+    <p class="mini-label">Live catalog</p>
+    <strong>{{ featuredCartTotal | currency:'INR':'symbol':'1.0-0' }}</strong>
+    <span>{{ featuredCartCount }} products visible on the storefront</span>
+  </aside>
+</section>
+
+<section class="section-block">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Highlights</p>
+      <h2>What this frontend already covers</h2>
+    </div>
+  </div>
+  <div class="card-grid three-up">
+    <article class="info-card" *ngFor="let item of highlights">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.text }}</p>
+    </article>
+  </div>
+</section>
+
+<section class="section-block" id="catalog">
+  <div class="section-head compact-head">
+    <div>
+      <p class="eyebrow">Storefront</p>
+      <h2>All products</h2>
+    </div>
+    <div class="filter-pills">
+      <button type="button" class="pill pill-button" [class.pill-active]="!activeCategoryId" (click)="loadProducts()">All</button>
+      <button
+        type="button"
+        class="pill pill-button"
+        *ngFor="let category of categories"
+        [class.pill-active]="activeCategoryId === category.id"
+        (click)="loadProducts(category.id)"
+      >
+        {{ category.name }}
+      </button>
+    </div>
+  </div>
+
+  <div class="inline-banner action-banner">
+    <label>
+      <span>Search Products</span>
+      <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" type="text" placeholder="Search by name, description, or category" />
+    </label>
+    <button *ngIf="searchTerm.trim()" type="button" class="ghost-btn" (click)="clearSearch()">Clear</button>
+  </div>
+
+  <div class="section-head">
+    <span class="pill">{{ statusMessage }}</span>
+    <span class="pill" *ngIf="searchTerm.trim()">{{ products.length }} matching products</span>
+  </div>
+
+  <div class="card-grid product-grid storefront-grid" *ngIf="products.length; else emptySearchState">
+    <article
+      class="product-card storefront-card home-storefront-card clickable-card"
+      *ngFor="let product of products"
+      role="button"
+      tabindex="0"
+      (click)="openProduct(product.id)"
+      (keydown)="onCardKeydown($event, product.id)"
+    >
+      <div class="product-media">
+        <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" decoding="async" />
+      </div>
+
+      <div class="storefront-card-content">
+        <p class="mini-label">{{ getCategoryName(product) }}</p>
+        <h3 class="product-title">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+
+        <div class="product-meta">
+          <span>
+            <small>Stock</small>
+            <strong>{{ product.stock }}</strong>
+          </span>
+          <span>
+            <small>Price</small>
+            <strong>{{ product.price | currency:'INR':'symbol':'1.0-0' }}</strong>
+          </span>
+        </div>
+
+        <button
+          *ngIf="!isAdmin()"
+          type="button"
+          class="primary-btn small-btn wide-btn"
+          (click)="$event.stopPropagation(); addToCart(product, $event)"
+          [disabled]="isAdded(product.id)"
+          [ngClass]="{ 'added-btn': isAdded(product.id) }"
+        >
+          {{ isAdded(product.id) ? 'Added' : 'Add to Cart' }}
+        </button>
+      </div>
+    </article>
+  </div>
+</section>
+
+<ng-template #emptySearchState>
+  <section class="inline-banner action-banner">
+    <p>{{ statusMessage }}</p>
+  </section>
+</ng-template>

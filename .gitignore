@@ -1,0 +1,24 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.config
+/.vs
+/src/ApiGateway/obj
+/src/Services/AuthService/obj
+/src/ApiGateway/bin/Debug/net9.0
+/src/Services/AuthService/bin/Debug/net9.0
+/src/Services/CartService/bin/Debug/net9.0
+/src/Services/CartService/obj
+/src/Services/CatalogService/bin/Debug/net9.0
+/src/Services/CatalogService/obj
+/src/Services/InventoryService/bin/Debug/net9.0
+/src/Services/InventoryService/obj
+/src/Services/NotificationService/bin/Debug/net9.0
+/src/Services/NotificationService/obj
+/src/Services/OrderService/bin/Debug/net9.0
+/src/Services/OrderService/obj
+/src/Services/PaymentService/bin/Debug/net9.0
+/src/Services/PaymentService/obj
+/src/web/microcommerce-ui/node_modules
+/src/web/microcommerce-ui/package-lock.json

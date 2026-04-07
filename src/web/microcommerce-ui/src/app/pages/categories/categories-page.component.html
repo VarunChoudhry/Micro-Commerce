@@ -1,0 +1,88 @@
+﻿<section class="section-head compact-head">
+  <div>
+    <p class="eyebrow">Catalog</p>
+    <h1>Categories</h1>
+    <p class="detail-status">Organize products cleanly and manage every category from one place.</p>
+  </div>
+  <div class="filter-pills">
+    <span class="pill">{{ session()?.role ?? 'Guest' }}</span>
+    <button *ngIf="isAdmin()" type="button" class="secondary-btn" (click)="openAddModal()">Add Category</button>
+  </div>
+</section>
+
+<section class="inline-banner action-banner category-banner">
+  <div>
+    <p>{{ statusMessage }}</p>
+    <small>Every product belongs to a category, so this page stays the source of truth for catalog grouping.</small>
+  </div>
+  <button *ngIf="isAdmin()" type="button" class="primary-btn" (click)="openAddModal()">Add Category</button>
+</section>
+
+<section class="card-grid category-grid">
+  <article class="category-card" *ngFor="let category of categories">
+    <div class="category-card-accent"></div>
+    <div class="category-card-body">
+      <div class="category-card-head">
+        <div>
+          <p class="mini-label">Category</p>
+          <h3>{{ category.name }}</h3>
+        </div>
+
+      </div>
+
+      <p class="category-card-copy">
+        This category helps group products and keeps the storefront easy to scan.
+      </p>
+
+      <div class="category-card-footer" *ngIf="isAdmin()">
+        <button type="button" class="icon-btn edit-btn" aria-label="Edit category" (click)="openEditModal(category)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.83H5v-.92l8.06-8.06.92.92-8.06 8.06zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
+        </button>
+        <button type="button" class="icon-btn delete-btn" aria-label="Delete category" (click)="requestDeleteCategory(category)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3.75V5H4.5v1.5h15V5H15V3.75h-6zM6.75 7.5l.75 11.25c.04.98.85 1.75 1.83 1.75h5.34c.98 0 1.79-.77 1.83-1.75L17.25 7.5H6.75zm3 2.25h1.5v8.25h-1.5V9.75zm3 0h1.5v8.25h-1.5V9.75z"/></svg>
+        </button>
+      </div>
+    </div>
+  </article>
+</section>
+
+<div class="modal-backdrop" *ngIf="showCategoryModal" (click)="closeCategoryModal()">
+  <section class="modal-card auth-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Category</p>
+        <h2>{{ categoryForm.id ? 'Update Category' : 'Add Category' }}</h2>
+      </div>
+      <button type="button" class="ghost-btn modal-close" (click)="closeCategoryModal()">Close</button>
+    </div>
+
+    <div class="form-grid category-form-grid">
+      <label>
+        <span>Name</span>
+        <input [(ngModel)]="categoryForm.name" type="text" placeholder="Category name" />
+      </label>
+    </div>
+
+    <div class="button-row">
+      <button type="button" class="primary-btn" (click)="submitCategory()">
+        {{ categoryForm.id ? 'Update Category' : 'Add Category' }}
+      </button>
+      <button type="button" class="ghost-btn" (click)="resetCategoryForm()">Reset</button>
+    </div>
+  </section>
+</div>
+
+<div class="modal-backdrop" *ngIf="showDeleteModal" (click)="cancelDeleteCategory()">
+  <section class="modal-card auth-card confirm-card" (click)="$event.stopPropagation()">
+    <p class="eyebrow">Confirm Delete</p>
+    <h2>Are you sure?</h2>
+    <p class="status-copy">
+      This will permanently delete <strong>{{ deleteCandidate?.name }}</strong>.
+    </p>
+    <div class="button-row">
+      <button type="button" class="ghost-btn" (click)="cancelDeleteCategory()">Cancel</button>
+      <button type="button" class="primary-btn" (click)="confirmDeleteCategory()">Delete</button>
+    </div>
+  </section>
+</div>
+

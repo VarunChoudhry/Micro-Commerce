@@ -1,0 +1,102 @@
+﻿<section class="section-head compact-head">
+  <div>
+    <p class="eyebrow">Admin</p>
+    <h1>Reports</h1>
+  </div>
+  <span class="pill">{{ statusMessage }}</span>
+</section>
+
+<section class="card-grid dashboard-grid">
+  <article class="stat-card" *ngFor="let card of summaryCards">
+    <p class="mini-label">{{ card.label }}</p>
+    <strong>{{ card.value }}</strong>
+    <small>{{ card.hint }}</small>
+  </article>
+</section>
+
+<section class="section-block split-layout">
+  <article class="auth-card chart-card">
+    <div class="section-head compact-head no-margin">
+      <div>
+        <p class="eyebrow">Orders</p>
+        <h2>Status Chart</h2>
+      </div>
+    </div>
+    <div class="bar-chart">
+      <div class="bar-row" *ngFor="let bar of orderBars">
+        <div class="bar-label">
+          <span>{{ bar.label }}</span>
+          <strong>{{ bar.count }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill order-fill" [style.width.%]="bar.percent"></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="auth-card chart-card">
+    <div class="section-head compact-head no-margin">
+      <div>
+        <p class="eyebrow">Payments</p>
+        <h2>Status Chart</h2>
+      </div>
+    </div>
+    <div class="bar-chart">
+      <div class="bar-row" *ngFor="let bar of paymentBars">
+        <div class="bar-label">
+          <span>{{ bar.label }}</span>
+          <strong>{{ bar.count }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill payment-fill" [style.width.%]="bar.percent"></div>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section class="section-block split-layout">
+  <article class="auth-card">
+    <div class="section-head compact-head no-margin">
+      <div>
+        <p class="eyebrow">Recent</p>
+        <h2>Orders</h2>
+      </div>
+    </div>
+    <div class="stack-list compact-stack">
+      <article class="admin-row compact-row" *ngFor="let order of recentOrders">
+        <div>
+          <h3>{{ order.customerName }}</h3>
+          <small>Order #{{ order.orderId | slice:-8 }} | {{ order.createdAt | date:'mediumDate' }}</small>
+          <small class="order-items">Items: {{ describeItems(order) }}</small>
+        </div>
+        <div class="order-meta">
+          <span class="status-badge">{{ order.status }}</span>
+          <strong>{{ order.totalAmount | currency:'INR':'symbol':'1.0-0' }}</strong>
+        </div>
+      </article>
+    </div>
+  </article>
+
+  <article class="auth-card">
+    <div class="section-head compact-head no-margin">
+      <div>
+        <p class="eyebrow">Recent</p>
+        <h2>Payments</h2>
+      </div>
+    </div>
+    <div class="stack-list compact-stack">
+      <article class="admin-row compact-row" *ngFor="let payment of recentPayments">
+        <div>
+          <h3>{{ payment.customerName }}</h3>
+          <small>Order #{{ payment.orderId | slice:-8 }} | {{ payment.processedAt | date:'mediumDate' }} | {{ payment.method }}</small>
+        </div>
+        <div class="order-meta">
+          <span class="status-badge">{{ payment.status }}</span>
+          <strong>{{ payment.amount | currency:'INR':'symbol':'1.0-0' }}</strong>
+        </div>
+      </article>
+    </div>
+  </article>
+</section>

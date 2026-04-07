@@ -1,0 +1,39 @@
+<section class="auth-shell">
+  <div class="auth-card">
+    <p class="eyebrow">Authentication</p>
+    <h1>Login or Register</h1>
+    <div class="form-grid">
+      <label>
+        <span>Full Name</span>
+        <input type="text" [(ngModel)]="fullName" />
+      </label>
+      <label>
+        <span>Email</span>
+        <input type="email" [(ngModel)]="email" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" [(ngModel)]="password" />
+      </label>
+    </div>
+    <p class="status-copy">{{ statusMessage }}</p>
+    <div class="button-row">
+      <button type="button" class="primary-btn" (click)="login()">Login</button>
+      <button type="button" class="secondary-btn" (click)="register()">Register</button>
+      <button type="button" class="ghost-btn" (click)="logout()">Logout</button>
+    </div>
+    <div class="mini-button-row top-gap">
+      <button type="button" class="secondary-btn small-btn" (click)="fillUserDemo()">Use Demo User</button>
+      <button type="button" class="secondary-btn small-btn" (click)="fillAdminDemo()">Use Admin User</button>
+    </div>
+  </div>
+  <aside class="summary-card warm-card">
+    <p class="eyebrow">Backend Status</p>
+    <ul class="plain-list">
+      <li>Auth API: login/register now wired</li>
+      <li>Catalog API: products and categories wired</li>
+      <li>Cart API: add, update, remove, clear wired</li>
+      <li>Order API: checkout and order history wired</li>
+    </ul>
+  </aside>
+</section>

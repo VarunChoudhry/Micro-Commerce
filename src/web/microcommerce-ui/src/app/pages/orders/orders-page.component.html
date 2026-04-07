@@ -1,0 +1,61 @@
+<section class="section-head compact-head">
+  <div>
+    <p class="eyebrow">Orders</p>
+    <h1>{{ pageTitle }}</h1>
+    <p class="detail-status">{{ statusMessage }}</p>
+  </div>
+</section>
+
+<section class="inline-banner order-banner">
+  <div>
+    <p>Order activity</p>
+    <small>Click any product name inside an order to open its detail page.</small>
+  </div>
+  <span class="pill">{{ orders.length }} orders</span>
+</section>
+
+<div class="stack-list order-list">
+  <article class="order-card" *ngFor="let order of orders">
+    <div class="order-card-accent"></div>
+    <div class="order-card-body">
+      <div class="order-card-top">
+        <div>
+          <p class="mini-label">{{ order.customerName }}</p>
+          <p class="order-id">Order ID: <strong>#{{ order.orderId | slice:-8 }}</strong></p>
+          <p class="order-card-subtitle">Placed on {{ order.createdAt | date:'mediumDate' }}</p>
+        </div>
+        <div class="order-meta order-meta-compact">
+          <span class="status-badge">{{ order.status }}</span>
+          <strong>{{ order.totalAmount | currency:'INR':'symbol':'1.0-0' }}</strong>
+          <button *ngIf="canShip(order)" type="button" class="secondary-btn small-btn" (click)="shipOrder(order)">Mark Shipped</button>
+          <button *ngIf="canDeliver(order)" type="button" class="secondary-btn small-btn" (click)="deliverOrder(order)">Mark Delivered</button>
+        </div>
+      </div>
+
+      <div class="order-shipping-panel">
+        <div>
+          <p class="mini-label">Shipping Address</p>
+          <p class="shipping-text">{{ order.shippingAddress }}</p>
+        </div>
+        <div>
+          <p class="mini-label">Shipping Status</p>
+          <p class="shipping-text">{{ getShippingSummary(order) }}</p>
+        </div>
+      </div>
+
+      <div class="order-items-panel">
+        <p class="mini-label">Items</p>
+        <div class="order-item-chips">
+          <a
+            *ngFor="let item of order.items"
+            [routerLink]="['/products', item.productId]"
+            class="order-item-chip"
+          >
+            <span class="order-item-name">{{ item.productName }}</span>
+            <span class="order-item-qty">x{{ item.quantity }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</div>

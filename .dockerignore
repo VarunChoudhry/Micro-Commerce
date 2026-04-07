@@ -1,0 +1,12 @@
+.git
+.vs
+artifacts
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.angular
+**/*.user
+**/*.suo
+**/*.swp
+**/*.tmp

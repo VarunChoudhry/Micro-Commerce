@@ -1,0 +1,66 @@
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-zone">
+      <a routerLink="/" class="brand-mark">MicroCommerce</a>
+    </div>
+
+    <div class="nav-zone">
+      <nav class="topnav">
+        <a
+          *ngFor="let item of navItems()"
+          [routerLink]="item.path"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+        >
+          {{ item.label }}
+        </a>
+        <a *ngIf="!isLoggedIn()" routerLink="/login" routerLinkActive="active-link">Account</a>
+      </nav>
+    </div>
+
+    <div class="account-zone">
+      <!-- <div class="session-chip">
+        <span class="session-role">{{ roleLabel() }}</span>
+        <strong>{{ session()?.fullName ?? 'Guest Visitor' }}</strong>
+        <small>{{ session()?.email ?? 'Browse the storefront and sign in to checkout' }}</small>
+      </div> -->
+
+      <div class="account-menu-wrap">
+        <button
+          type="button"
+          class="avatar-button"
+          (click)="toggleAccountMenu()"
+          [attr.aria-expanded]="accountMenuOpen()"
+          aria-haspopup="menu"
+          aria-label="Account menu"
+        >
+          <span class="avatar-initials">{{ avatarInitials() }}</span>
+        </button>
+
+        <div class="account-menu" *ngIf="accountMenuOpen()" role="menu">
+          <p class="account-menu-title">{{ session()?.fullName ?? 'Guest Visitor' }}</p>
+          <small class="account-menu-subtitle">
+            {{ session()?.email ?? 'Browse the storefront and sign in to checkout' }}
+          </small>
+          <button type="button" class="secondary-btn small-btn wide-btn" (click)="handleSessionAction()">
+            {{ isLoggedIn() ? 'Logout' : 'Login' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <router-outlet></router-outlet>
+  </main>
+
+  <div class="toast-stack" aria-live="polite" aria-atomic="true">
+    <article class="toast-item" *ngFor="let toast of toasts()" [ngClass]="'toast-' + toast.type">
+      <div>
+        <p class="toast-title">{{ toast.title }}</p>
+        <p class="toast-message">{{ toast.message }}</p>
+      </div>
+      <button type="button" class="toast-close" (click)="dismissToast(toast.id)">�</button>
+    </article>
+  </div>
+</div>

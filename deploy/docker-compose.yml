@@ -1,0 +1,106 @@
+version: "3.9"
+
+services:
+  web-ui:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/web-ui:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/frontend.Dockerfile
+    ports:
+      - "4200:80"
+
+  api-gateway:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/api-gateway:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/ApiGateway/ApiGateway.csproj
+        APP_DLL: ApiGateway.dll
+    ports:
+      - "5159:8080"
+
+  auth-service:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/auth-service:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/Services/AuthService/AuthService.csproj
+        APP_DLL: AuthService.dll
+    ports:
+      - "5225:8080"
+
+  catalog-service:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/catalog-service:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/Services/CatalogService/CatalogService.csproj
+        APP_DLL: CatalogService.dll
+    ports:
+      - "5019:8080"
+
+  cart-service:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/cart-service:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/Services/CartService/CartService.csproj
+        APP_DLL: CartService.dll
+    ports:
+      - "5075:8080"
+
+  order-service:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/order-service:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/Services/OrderService/OrderService.csproj
+        APP_DLL: OrderService.dll
+    ports:
+      - "5110:8080"
+
+  payment-service:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/payment-service:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/Services/PaymentService/PaymentService.csproj
+        APP_DLL: PaymentService.dll
+    ports:
+      - "5042:8080"
+
+  inventory-service:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/inventory-service:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/Services/InventoryService/InventoryService.csproj
+        APP_DLL: InventoryService.dll
+    ports:
+      - "5249:8080"
+
+  notification-service:
+    image: ${IMAGE_REPOSITORY_PREFIX:-microcommerce}/notification-service:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/docker/backend.Dockerfile
+      args:
+        PROJECT_PATH: src/Services/NotificationService/NotificationService.csproj
+        APP_DLL: NotificationService.dll
+    ports:
+      - "5292:8080"
+
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Your_strong_password123"
+    ports:
+      - "1433:1433"

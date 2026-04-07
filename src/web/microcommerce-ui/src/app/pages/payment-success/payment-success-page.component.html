@@ -1,0 +1,24 @@
+﻿<section class="hero-panel compact-hero">
+  <div>
+    <p class="eyebrow">Payment</p>
+    <h1>Success</h1>
+    <p class="lede">{{ statusMessage }}</p>
+    <div class="button-row top-gap">
+      <a routerLink="/orders" class="primary-btn">Go to Orders</a>
+      <a routerLink="/" class="secondary-btn">Back to Home</a>
+    </div>
+  </div>
+  <aside class="spotlight-card" *ngIf="payment; else pendingState">
+    <p class="mini-label">Payment recorded</p>
+    <strong>{{ payment.amount | currency:'INR':'symbol':'1.0-0' }}</strong>
+    <span>Order {{ payment.orderId }}</span>
+    <small>{{ payment.processedAt | date:'medium' }}</small>
+  </aside>
+  <ng-template #pendingState>
+    <aside class="spotlight-card">
+      <p class="mini-label">Waiting</p>
+      <strong>Stripe callback</strong>
+      <span>{{ autoRedirectMessage }}</span>
+    </aside>
+  </ng-template>
+</section>

@@ -1,0 +1,167 @@
+<section class="section-head compact-head">
+  <div>
+    <p class="eyebrow">Catalog</p>
+    <h1>Products</h1>
+  </div>
+  <div class="filter-pills">
+    <button type="button" class="pill pill-button" [class.pill-active]="!activeCategoryId" (click)="loadProducts()">All</button>
+    <button
+      type="button"
+      class="pill pill-button"
+      *ngFor="let category of categories"
+      [class.pill-active]="activeCategoryId === category.id"
+      (click)="loadProducts(category.id)"
+    >
+      {{ category.name }}
+    </button>
+  </div>
+</section>
+
+<section class="inline-banner action-banner">
+  <label>
+    <span>Search Products</span>
+    <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" type="text" placeholder="Search by name, description, or category" />
+  </label>
+  <div class="mini-button-row">
+    <span class="pill" *ngIf="searchTerm.trim()">{{ products.length }} matches</span>
+    <button *ngIf="searchTerm.trim()" type="button" class="ghost-btn" (click)="clearSearch()">Clear</button>
+    <button *ngIf="isAdmin()" type="button" class="secondary-btn" (click)="openAddModal()">Add Product</button>
+  </div>
+</section>
+
+<section class="inline-banner" *ngIf="statusMessage">
+  <p>{{ statusMessage }}</p>
+</section>
+
+<section class="card-grid product-grid" *ngIf="products.length; else noProductsFound">
+  <article
+    [id]="'product-' + product.id"
+    class="product-card storefront-card clickable-card"
+    [class.focused-product]="isFocused(product)"
+    *ngFor="let product of products; trackBy: trackByProductId"
+    role="button"
+    tabindex="0"
+    (click)="openProduct(product.id)"
+    (keydown)="onCardKeydown($event, product.id)"
+  >
+    <div class="product-card-media">
+      <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" decoding="async" />
+      <div class="product-card-badges">
+        <span class="pill product-pill">{{ getCategoryName(product) }}</span>
+        <span class="pill product-pill product-stock-pill">Stock {{ product.stock }}</span>
+      </div>
+    </div>
+
+    <div class="product-card-body">
+      <div class="product-card-head">
+        <p class="mini-label clickable-link" (click)="$event.stopPropagation(); openProduct(product.id)">{{ getCategoryName(product) }}</p>
+        <div class="mini-button-row product-admin-actions" *ngIf="isAdmin()">
+          <button type="button" class="icon-btn edit-btn" aria-label="Edit product" (click)="$event.stopPropagation(); openEditModal(product)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.83H5v-.92l8.06-8.06.92.92-8.06 8.06zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
+          </button>
+          <button type="button" class="icon-btn delete-btn" aria-label="Delete product" (click)="$event.stopPropagation(); requestDeleteProduct(product)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3.75V5H4.5v1.5h15V5H15V3.75h-6zM6.75 7.5l.75 11.25c.04.98.85 1.75 1.83 1.75h5.34c.98 0 1.79-.77 1.83-1.75L17.25 7.5H6.75zm3 2.25h1.5v8.25h-1.5V9.75zm3 0h1.5v8.25h-1.5V9.75z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <h3 class="product-title clickable-link" (click)="$event.stopPropagation(); openProduct(product.id)">{{ product.name }}</h3>
+      <p class="product-description">{{ product.description }}</p>
+
+      <div class="product-meta">
+        <span>
+          <small>Price</small>
+          <strong>{{ product.price | currency:'INR':'symbol':'1.0-0' }}</strong>
+        </span>
+        <span>
+          <small>Category</small>
+          <strong>{{ getCategoryName(product) }}</strong>
+        </span>
+      </div>
+    </div>
+
+    <div class="product-card-footer">
+      <span class="product-stock-copy">{{ product.stock }} left in stock</span>
+      <button *ngIf="!isAdmin()" type="button" class="primary-btn small-btn" [disabled]="isAdded(product.id)" [ngClass]="{ 'added-btn': isAdded(product.id) }" (click)="$event.stopPropagation(); addToCart(product, $event)">{{ isAdded(product.id) ? 'Added' : 'Add to Cart' }}</button>
+    </div>
+  </article>
+</section>
+
+<ng-template #noProductsFound>
+  <section class="inline-banner action-banner">
+    <p>{{ statusMessage }}</p>
+  </section>
+</ng-template>
+
+<div class="modal-backdrop" *ngIf="showProductModal" (click)="closeProductModal()">
+  <section class="modal-card auth-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Product</p>
+        <h2>{{ productForm.id ? 'Update Product' : 'Add Product' }}</h2>
+      </div>
+      <button type="button" class="ghost-btn modal-close" (click)="closeProductModal()">Close</button>
+    </div>
+
+    <div class="form-grid product-form-grid">
+      <label>
+        <span>Name</span>
+        <input [(ngModel)]="productForm.name" type="text" placeholder="Product name" />
+      </label>
+      <label>
+        <span>Description</span>
+        <input [(ngModel)]="productForm.description" type="text" placeholder="Short description" />
+      </label>
+      <label>
+        <span>Image File</span>
+        <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+      </label>
+      <label>
+        <span>Price</span>
+        <input [(ngModel)]="productForm.price" type="number" placeholder="0" />
+      </label>
+      <label>
+        <span>Stock</span>
+        <input [(ngModel)]="productForm.stock" type="number" placeholder="0" />
+      </label>
+      <label>
+        <span>Category</span>
+        <select [(ngModel)]="productForm.categoryId" class="select-field">
+          <option *ngFor="let category of categories" [ngValue]="category.id">{{ category.name }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="inline-banner action-banner" *ngIf="isProcessingImage || productForm.imageBase64 || imagePreviewUrl">
+      <div>
+        <p>{{ isProcessingImage ? 'Optimizing image for faster save and load...' : 'Image preview ready.' }}</p>
+      </div>
+      <button type="button" class="ghost-btn" *ngIf="!isProcessingImage" (click)="clearSelectedImage()">Remove Image</button>
+    </div>
+
+    <div class="product-card-media" *ngIf="imagePreviewUrl || productForm.imageBase64">
+      <img [src]="getFormImagePreview()" alt="Product preview" decoding="async" />
+    </div>
+
+    <div class="button-row">
+      <button type="button" class="primary-btn" [disabled]="isProcessingImage" (click)="saveProduct()">
+        {{ productForm.id ? 'Update Product' : 'Add Product' }}
+      </button>
+      <button type="button" class="ghost-btn" [disabled]="isProcessingImage" (click)="resetProductForm()">Reset</button>
+    </div>
+  </section>
+</div>
+
+<div class="modal-backdrop" *ngIf="showDeleteModal" (click)="cancelDeleteProduct()">
+  <section class="modal-card auth-card confirm-card" (click)="$event.stopPropagation()">
+    <p class="eyebrow">Confirm Delete</p>
+    <h2>Are you sure?</h2>
+    <p class="status-copy">
+      This will permanently delete <strong>{{ deleteCandidate?.name }}</strong>.
+    </p>
+    <div class="button-row">
+      <button type="button" class="ghost-btn" (click)="cancelDeleteProduct()">Cancel</button>
+      <button type="button" class="primary-btn" (click)="confirmDeleteProduct()">Delete</button>
+    </div>
+  </section>
+</div>
